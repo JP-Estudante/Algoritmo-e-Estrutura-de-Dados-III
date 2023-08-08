@@ -16,13 +16,30 @@ Lista *lst_cria(void)
     return NULL;
 }
 
-/* inser??o no in?cio: retorna a lista atualizada */
+// /* inser??o no in?cio: retorna a lista atualizada */
 Lista *lst_insere(Lista *l, int i)
 {
     Lista *novo = (Lista *)malloc(sizeof(Lista));
     novo->info = i;
     novo->prox = l;
     return novo;
+}
+
+/* inser??o no in?cio: retorna a lista atualizada */
+Lista *lst_insere_ordenada(Lista *l, int v)
+{
+    if (l != NULL && l->info < v)
+    {
+        l->prox = lst_insere_ordenada(l->prox, v);
+    }
+    else
+    {
+        Lista *novo = (Lista *)malloc(sizeof(Lista));
+        novo->info = v;
+        novo->prox = l;
+        return novo;
+    }
+    return l;
 }
 
 /* fun??o vazia: retorna 1 se vazia ou 0 se n?o vazia */
@@ -43,14 +60,24 @@ Lista *busca(Lista *l, int v)
     return NULL; /* n?o achou o elemento */
 }
 
+// void lst_libera(Lista *l)
+// {
+//     Lista *p = l;
+//     while (p != NULL)
+//     {
+//         Lista *t = p->prox; /* guarda refer?ncia p/ pr?x. elemento */
+//         free(p);            /* libera a mem?ria apontada por p */
+//         p = t;              /* faz p apontar para o pr?ximo */
+//     }
+// }
+
 void lst_libera(Lista *l)
 {
-    Lista *p = l;
-    while (p != NULL)
+    if (l != NULL)
     {
-        Lista *t = p->prox; /* guarda refer?ncia p/ pr?x. elemento */
-        free(p);            /* libera a mem?ria apontada por p */
-        p = t;              /* faz p apontar para o pr?ximo */
+        Lista *t = l->prox; /* guarda refer?ncia p/ pr?x. elemento */
+        free(l);            /* libera a mem?ria apontada por p */
+        lst_libera(t);
     }
 }
 
@@ -93,10 +120,10 @@ int main(void)
 
     l = lst_cria(); /* cria e inicializa lista como vazia */
 
-    l = lst_insere(l, 23); /* insere na lista o elemento 23 */
-    l = lst_insere(l, 45); /* insere na lista o elemento 45 */
-    l = lst_insere(l, 8);  /* insere na lista o elemento 8 */
-    l = lst_insere(l, 10); /* insere na lista o elemento 10 */
+    l = lst_insere_ordenada(l, 23); /* insere na lista o elemento 23 */
+    l = lst_insere_ordenada(l, 45); /* insere na lista o elemento 45 */
+    l = lst_insere_ordenada(l, 8);  /* insere na lista o elemento 8 */
+    l = lst_insere_ordenada(l, 10); /* insere na lista o elemento 10 */
 
     lst_imprime(l); /*  imprime a lista*/
 
