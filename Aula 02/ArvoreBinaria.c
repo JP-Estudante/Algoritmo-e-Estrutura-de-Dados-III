@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 struct noArv
 {
@@ -9,38 +9,41 @@ struct noArv
 };
 typedef struct noArv NoArv;
 
-NoArv* cria_arv_vazia(void){
+NoArv *cria_arv_vazia(void)
+{
     return NULL;
 }
 
-NoArv* cria_arvore(int v, NoArv *e, NoArv *d)
+NoArv *arvore_cria(int v, NoArv *e, NoArv *d)
 {
-    NoArv *p= (NoArv *)malloc(sizeof(NoArv));
+    NoArv *p = (NoArv *)malloc(sizeof(NoArv));
     p->info = v;
     p->esq = e;
     p->dir = d;
     return p;
 }
 
-int arv_vazia (NoArv* a)
+int arv_vazia(NoArv *a)
 {
-    return a==NULL;
+    return a == NULL;
 }
 
-NoArv* arv_libera (NoArv* a)
+NoArv *arv_libera(NoArv *a)
 {
-    if (!arv_vazia(a)){
+    if (!arv_vazia(a))
+    {
         arv_libera(a->esq); /* libera sae */
         arv_libera(a->dir); /* libera sad */
-        free(a); /* libera raiz */
+        free(a);            /* libera raiz */
     }
     return NULL;
 }
+
 void imprime_arv(NoArv *a)
 {
     if (a != NULL)
     {
-        printf("%d ",a->info);
+        printf("%d ", a->info);
         imprime_arv(a->esq);
         imprime_arv(a->dir);
     }
@@ -48,15 +51,15 @@ void imprime_arv(NoArv *a)
 
 void imprime_arv_simetrica(NoArv *a)
 {
-    if (a!=NULL)
+    if (a != NULL)
     {
         imprime_arv_simetrica(a->esq);
-        printf("%d ",a->info);
+        printf("%d ", a->info);
         imprime_arv_simetrica(a->dir);
     }
 }
 
-NoArv* busca_arv(NoArv *a, int v)
+NoArv *busca_arv(NoArv *a, int v)
 {
     if (a == NULL)
         return NULL;
@@ -68,7 +71,7 @@ NoArv* busca_arv(NoArv *a, int v)
     return a;
 }
 
-NoArv* insere_arv(NoArv *a, int v)
+NoArv *insere_arv(NoArv *a, int v)
 {
     if (busca_arv(a, v) != NULL)
         return a;
@@ -79,68 +82,63 @@ NoArv* insere_arv(NoArv *a, int v)
         a->info = v;
         a->esq = a->dir = NULL;
     }
-    else
-        if (v < a->info)
-             a->esq = insere_arv(a->esq, v);
-        else // v >= a->info //n?o permite inserir nodos iguais
-            a->dir = insere_arv(a->dir, v);
+    else if (v < a->info)
+        a->esq = insere_arv(a->esq, v);
+    else // v >= a->info //n?o permite inserir nodos iguais
+        a->dir = insere_arv(a->dir, v);
 
     return a;
 }
 
-NoArv* retira_arv(NoArv* r, int v)
+NoArv *retira_arv(NoArv *r, int v)
 {
     NoArv *t, *f;
 
     if (r == NULL)
         return NULL;
-    else
-        if (r->info > v)
-            r->esq = retira_arv(r->esq, v);
-        else
-            if (r->info < v)
-                r->dir = retira_arv(r->dir, v);
-            else /* achou o n? a remover */
+    else if (r->info > v)
+        r->esq = retira_arv(r->esq, v);
+    else if (r->info < v)
+        r->dir = retira_arv(r->dir, v);
+    else /* achou o n? a remover */
+    {
+        if (r->esq == NULL && r->dir == NULL) /* n? sem filhos */
+        {
+            free(r);
+            r = NULL;
+        }
+        else if (r->esq == NULL) /* n? s? tem filho ? direita */
+        {
+            t = r;
+            r = r->dir;
+            free(t);
+        }
+        else if (r->dir == NULL) /* s? tem filho ? esquerda */
+        {
+            t = r;
+            r = r->esq;
+            free(t);
+        }
+        else /* n? tem os dois filhos */
+        {
+            f = r->esq;
+            while (f->dir != NULL)
             {
-                if (r->esq == NULL && r->dir == NULL) /* n? sem filhos */
-                {
-                    free(r);
-                    r = NULL;
-                }
-                else
-                    if (r->esq == NULL) /* n? s? tem filho ? direita */
-                    {
-                        t = r;
-                        r = r->dir;
-                        free(t);
-                    }
-                    else
-                        if (r->dir == NULL) /* s? tem filho ? esquerda */
-                        {
-                            t = r;
-                            r = r->esq;
-                            free (t);
-                        }
-                        else /* n? tem os dois filhos */
-                        {
-                            f = r->esq;
-                            while (f->dir != NULL)
-                            {
-                                f = f->dir;
-                            }
-                            r->info = f->info; /* troca as informa??es */
-                            f->info = v;
-                            r->esq = retira_arv(r->esq, v);
-                        }
+                f = f->dir;
             }
+            r->info = f->info; /* troca as informa??es */
+            f->info = v;
+            r->esq = retira_arv(r->esq, v);
+        }
+    }
     return r;
 }
 
-int main (void)
+int main(void)
 {
-    //NoArv *a = cria_arv_vazia();
-    NoArv *a = cria_arvore(5,cria_arvore(3,NULL,cria_arvore(4,NULL,NULL)),
-               cria_arvore(9,cria_arvore(7,NULL,NULL),cria_arvore(11,NULL,NULL)));
+    // NoArv *a = cria_arv_vazia();
+    NoArv *a = arvore_cria(5, arvore_cria(3, NULL, arvore_cria(4, NULL, NULL)),
+                           arvore_cria(9, arvore_cria(7, NULL, NULL), arvore_cria(11, NULL, NULL)));
 
     a = insere_arv(a, 8);
     a = insere_arv(a, 2);
@@ -148,8 +146,8 @@ int main (void)
     a = insere_arv(a, 10);
     a = insere_arv(a, 32);
 
-    //int teste;
-    //scanf("%i", &teste);
+    // int teste;
+    // scanf("%i", &teste);
 
     imprime_arv(a);
 
